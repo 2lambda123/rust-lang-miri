@@ -10,6 +10,7 @@ import os
 import re
 import subprocess
 import sys
+from security import safe_command
 
 CGREEN  = '\33[32m'
 CBOLD   = '\33[1m'
@@ -60,8 +61,7 @@ def test(name, cmd, stdout_ref, stderr_ref, stdin=b'', env=None):
     ## Call `cargo miri`, capture all output
     p_env = os.environ.copy()
     p_env.update(env)
-    p = subprocess.Popen(
-        cmd,
+    p = safe_command.run(subprocess.Popen, cmd,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -85,8 +85,7 @@ def test_no_rebuild(name, cmd, env=None):
     print("Testing {}...".format(name))
     p_env = os.environ.copy()
     p_env.update(env)
-    p = subprocess.Popen(
-        cmd,
+    p = safe_command.run(subprocess.Popen, cmd,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         env=p_env,
